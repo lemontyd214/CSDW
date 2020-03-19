@@ -6,22 +6,21 @@ import MySQLdb
 def score_query():
     conn = MySQLdb.connect("localhost", "root", "", "csdw", charset="utf8")
     cursor = conn.cursor()
-    sql = "select id, score from player_info;"
+    sql = "select a.name, b.score from player_name a, player_info b where a.id=b.id;"
     query_result = ""
-    '''
-    未完成
-    '''
     try:
         cursor.execute(sql)
         results = cursor.fetchall()
         for row in results:
-            id = row[0]
-            score = row[1]
-            # print("id = {}, score = {}".format(id, score))
+            name = row[0]
+            score = str(row[1])
+            query_result += u"\u3010" + name + u"\u3011\uFF1A" + score + "\n"
+        # print(query_result)
     except:
         print("Error! Unable to fetch data")
-        return False
+        return "fail"
     conn.close()
+    return query_result
 
 
 def write_record(record):
@@ -181,7 +180,7 @@ def write_record(record):
 
 
 if __name__ == "__main__":
-    write_result = write_record("20200316;462160,-230,4,6,4,0,0;231508,-136,2,4,0,0,1;741920,106,10,5,1,0,2;"
-                                "253786,260,6,7,4,2,3;253786;462160")
-    print(write_result)
-    # score_query()
+    # write_result = write_record("20200316;462160,-230,4,6,4,0,0;231508,-136,2,4,0,0,1;741920,106,10,5,1,0,2;"
+    #                             "253786,260,6,7,4,2,3;253786;462160")
+    # print(write_result)
+    score_query()
