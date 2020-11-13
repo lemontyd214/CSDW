@@ -1,26 +1,26 @@
-	id
-    score
-    game_count
-    big_winner_count
-    big_boomer_count
-    win_count
-    lose_count
+id
+score
+game_count
+big_winner_count
+big_boomer_count
+win_count
+lose_count
 big_winner_rate
-boom_rate
+big_boomer_rate
 win_rate
 lose_rate
-    win_max
-    lose_max
-    winning_streak_count
-    losing_streak_count
-    zhuang_count
-    hu_count
-    pao_count
-    bao_count
-    lou_count
-    zhuang_max_count
-    hu_max_count
-    hu_min_count
+win_max
+lose_max
+winning_streak_count
+losing_streak_count
+zhuang_count
+hu_count
+pao_count
+bao_count
+lou_count
+zhuang_max_count
+hu_max_count
+hu_min_count
 pao_max_count
 bao_max_count
 lou_max_count

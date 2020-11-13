@@ -23,6 +23,7 @@ def score_query():
 	except:
 		print("Error! Unable to fetch data")
 		return "fail"
+	cursor.close()
 	conn.close()
 	return query_result
 
@@ -33,8 +34,8 @@ def check_new_player(id, cursor):
 	# 完成
 	sql = "select * from player_name where id={};".format(id)
 	cursor.execute(sql)
-	results = cursor.fetchall()
-	if results:
+	result = cursor.fetchone()
+	if result:
 		return False
 	return True
 
@@ -48,6 +49,7 @@ def add_player(id, cursor):
 	cursor.execute(add_player_name_sql)
 	cursor.execute(add_player_info_sql)
 	return
+
 
 def write_record(record):
 	# 根据上传对局代码写数据库
@@ -582,14 +584,14 @@ def write_record(record):
 
 		# 更新最多坐庄数
 		# 完成
-		sql1_zhuang_max_count = "update player_info set zhuang_max_count = zhuang_count " \
-								"where id = {} and zhuang_max_count < zhuang_count;".format(player1_id)
-		sql2_zhuang_max_count = "update player_info set zhuang_max_count = zhuang_count " \
-								"where id = {} and zhuang_max_count < zhuang_count;".format(player2_id)
-		sql3_zhuang_max_count = "update player_info set zhuang_max_count = zhuang_count " \
-								"where id = {} and zhuang_max_count < zhuang_count;".format(player3_id)
-		sql4_zhuang_max_count = "update player_info set zhuang_max_count = zhuang_count " \
-								"where id = {} and zhuang_max_count < zhuang_count;".format(player4_id)
+		sql1_zhuang_max_count = "update player_info set zhuang_max_count = {} " \
+								"where id = {} and zhuang_max_count < {};".format(player1_zhuang, player1_id, player1_zhuang)
+		sql2_zhuang_max_count = "update player_info set zhuang_max_count = {} " \
+								"where id = {} and zhuang_max_count < {};".format(player2_zhuang, player2_id, player2_zhuang)
+		sql3_zhuang_max_count = "update player_info set zhuang_max_count = {} " \
+								"where id = {} and zhuang_max_count < {};".format(player3_zhuang, player3_id, player3_zhuang)
+		sql4_zhuang_max_count = "update player_info set zhuang_max_count = {} " \
+								"where id = {} and zhuang_max_count < {};".format(player4_zhuang, player4_id, player4_zhuang)
 		cursor.execute(sql1_zhuang_max_count)
 		cursor.execute(sql2_zhuang_max_count)
 		cursor.execute(sql3_zhuang_max_count)
@@ -598,14 +600,14 @@ def write_record(record):
 
 		# 更新最多胡牌数
 		# 完成
-		sql1_hu_max_count = "update player_info set hu_max_count = hu_count " \
-							"where id = {} and hu_max_count < hu_count;".format(player1_id)
-		sql2_hu_max_count = "update player_info set hu_max_count = hu_count " \
-							"where id = {} and hu_max_count < hu_count;".format(player2_id)
-		sql3_hu_max_count = "update player_info set hu_max_count = hu_count " \
-							"where id = {} and hu_max_count < hu_count;".format(player3_id)
-		sql4_hu_max_count = "update player_info set hu_max_count = hu_count " \
-							"where id = {} and hu_max_count < hu_count;".format(player4_id)
+		sql1_hu_max_count = "update player_info set hu_max_count = {} " \
+							"where id = {} and hu_max_count < {};".format(player1_hu, player1_id, player1_hu)
+		sql2_hu_max_count = "update player_info set hu_max_count = {} " \
+							"where id = {} and hu_max_count < {};".format(player2_hu, player2_id, player2_hu)
+		sql3_hu_max_count = "update player_info set hu_max_count = {} " \
+							"where id = {} and hu_max_count < {};".format(player3_hu, player3_id, player3_hu)
+		sql4_hu_max_count = "update player_info set hu_max_count = {} " \
+							"where id = {} and hu_max_count < {};".format(player4_hu, player4_id, player4_hu)
 		cursor.execute(sql1_hu_max_count)
 		cursor.execute(sql2_hu_max_count)
 		cursor.execute(sql3_hu_max_count)
@@ -614,14 +616,14 @@ def write_record(record):
 
 		# 更新最少胡牌数
 		# 完成
-		sql1_hu_min_count = "update player_info set hu_min_count = hu_count " \
-							"where id = {} and hu_min_count > hu_count;".format(player1_id)
-		sql2_hu_min_count = "update player_info set hu_min_count = hu_count " \
-							"where id = {} and hu_min_count > hu_count;".format(player2_id)
-		sql3_hu_min_count = "update player_info set hu_min_count = hu_count " \
-							"where id = {} and hu_min_count > hu_count;".format(player3_id)
-		sql4_hu_min_count = "update player_info set hu_min_count = hu_count " \
-							"where id = {} and hu_min_count > hu_count;".format(player4_id)
+		sql1_hu_min_count = "update player_info set hu_min_count = {} " \
+							"where id = {} and hu_min_count > {};".format(player1_hu, player1_id, player1_hu)
+		sql2_hu_min_count = "update player_info set hu_min_count = {} " \
+							"where id = {} and hu_min_count > {};".format(player2_hu, player2_id, player2_hu)
+		sql3_hu_min_count = "update player_info set hu_min_count = {} " \
+							"where id = {} and hu_min_count > {};".format(player3_hu, player3_id, player3_hu)
+		sql4_hu_min_count = "update player_info set hu_min_count = {} " \
+							"where id = {} and hu_min_count > {};".format(player4_hu, player4_id, player4_hu)
 		cursor.execute(sql1_hu_min_count)
 		cursor.execute(sql2_hu_min_count)
 		cursor.execute(sql3_hu_min_count)
@@ -629,12 +631,217 @@ def write_record(record):
 
 
 		# 更新最多点炮数
-		# ********  未完成  *********
-		# sql1_pao_max_count = ""
+		# 完成
+		sql1_pao_max_count = "update player_info set pao_max_count = {} " \
+							 "where id = {} and pao_max_count < {};".format(player1_pao, player1_id, player1_pao)
+		sql2_pao_max_count = "update player_info set pao_max_count = {} " \
+							 "where id = {} and pao_max_count < {};".format(player2_pao, player2_id, player2_pao)
+		sql3_pao_max_count = "update player_info set pao_max_count = {} " \
+							 "where id = {} and pao_max_count < {};".format(player3_pao, player3_id, player3_pao)
+		sql4_pao_max_count = "update player_info set pao_max_count = {} " \
+							 "where id = {} and pao_max_count < {};".format(player4_pao, player4_id, player4_pao)
+		cursor.execute(sql1_pao_max_count)
+		cursor.execute(sql2_pao_max_count)
+		cursor.execute(sql3_pao_max_count)
+		cursor.execute(sql4_pao_max_count)
 
+
+		# 更新最多摸宝数
+		# 完成
+		sql1_bao_max_count = "update player_info set bao_max_count = {} " \
+							 "where id = {} and bao_max_count < {};".format(player1_bao, player1_id, player1_bao)
+		sql2_bao_max_count = "update player_info set bao_max_count = {} " \
+							 "where id = {} and bao_max_count < {};".format(player2_bao, player2_id, player2_bao)
+		sql3_bao_max_count = "update player_info set bao_max_count = {} " \
+							 "where id = {} and bao_max_count < {};".format(player3_bao, player3_id, player3_bao)
+		sql4_bao_max_count = "update player_info set bao_max_count = {} " \
+							 "where id = {} and bao_max_count < {};".format(player4_bao, player4_id, player4_bao)
+		cursor.execute(sql1_bao_max_count)
+		cursor.execute(sql2_bao_max_count)
+		cursor.execute(sql3_bao_max_count)
+		cursor.execute(sql4_bao_max_count)
+
+
+		# 更新最多漏宝数
+		# 完成
+		sql1_lou_max_count = "update player_info set lou_max_count = {} " \
+							 "where id = {} and lou_max_count < {};".format(player1_lou, player1_id, player1_lou)
+		sql2_lou_max_count = "update player_info set lou_max_count = {} " \
+							 "where id = {} and lou_max_count < {};".format(player2_lou, player2_id, player2_lou)
+		sql3_lou_max_count = "update player_info set lou_max_count = {} " \
+							 "where id = {} and lou_max_count < {};".format(player3_lou, player3_id, player3_lou)
+		sql4_lou_max_count = "update player_info set lou_max_count = {} " \
+							 "where id = {} and lou_max_count < {};".format(player4_lou, player4_id, player4_lou)
+		cursor.execute(sql1_lou_max_count)
+		cursor.execute(sql2_lou_max_count)
+		cursor.execute(sql3_lou_max_count)
+		cursor.execute(sql4_lou_max_count)
+
+
+		# 更新场均坐庄数
+		# 完成
+		sql1_zhuang_avg = "update player_info set zhuang_avg = zhuang_count / game_count " \
+						  "where id = {};".format(player1_id)
+		sql2_zhuang_avg = "update player_info set zhuang_avg = zhuang_count / game_count " \
+						  "where id = {};".format(player2_id)
+		sql3_zhuang_avg = "update player_info set zhuang_avg = zhuang_count / game_count " \
+						  "where id = {};".format(player3_id)
+		sql4_zhuang_avg = "update player_info set zhuang_avg = zhuang_count / game_count " \
+						  "where id = {};".format(player4_id)
+		cursor.execute(sql1_zhuang_avg)
+		cursor.execute(sql2_zhuang_avg)
+		cursor.execute(sql3_zhuang_avg)
+		cursor.execute(sql4_zhuang_avg)
+
+
+		# 更新场均胡牌数
+		# 完成
+		sql1_hu_avg = "update player_info set hu_avg = hu_count / game_count " \
+						  "where id = {};".format(player1_id)
+		sql2_hu_avg = "update player_info set hu_avg = hu_count / game_count " \
+						  "where id = {};".format(player2_id)
+		sql3_hu_avg = "update player_info set hu_avg = hu_count / game_count " \
+						  "where id = {};".format(player3_id)
+		sql4_hu_avg = "update player_info set hu_avg = hu_count / game_count " \
+						  "where id = {};".format(player4_id)
+		cursor.execute(sql1_hu_avg)
+		cursor.execute(sql2_hu_avg)
+		cursor.execute(sql3_hu_avg)
+		cursor.execute(sql4_hu_avg)
+
+
+		# 更新场均点炮数
+		# 完成
+		sql1_pao_avg = "update player_info set pao_avg = pao_count / game_count " \
+					  "where id = {};".format(player1_id)
+		sql2_pao_avg = "update player_info set pao_avg = pao_count / game_count " \
+					  "where id = {};".format(player2_id)
+		sql3_pao_avg = "update player_info set pao_avg = pao_count / game_count " \
+					  "where id = {};".format(player3_id)
+		sql4_pao_avg = "update player_info set pao_avg = pao_count / game_count " \
+					  "where id = {};".format(player4_id)
+		cursor.execute(sql1_pao_avg)
+		cursor.execute(sql2_pao_avg)
+		cursor.execute(sql3_pao_avg)
+		cursor.execute(sql4_pao_avg)
+
+
+		# 更新场均摸宝数
+		# 完成
+		sql1_bao_avg = "update player_info set bao_avg = bao_count / game_count " \
+					   "where id = {};".format(player1_id)
+		sql2_bao_avg = "update player_info set bao_avg = bao_count / game_count " \
+					   "where id = {};".format(player2_id)
+		sql3_bao_avg = "update player_info set bao_avg = bao_count / game_count " \
+					   "where id = {};".format(player3_id)
+		sql4_bao_avg = "update player_info set bao_avg = bao_count / game_count " \
+					   "where id = {};".format(player4_id)
+		cursor.execute(sql1_bao_avg)
+		cursor.execute(sql2_bao_avg)
+		cursor.execute(sql3_bao_avg)
+		cursor.execute(sql4_bao_avg)
+
+
+		# 更新场均漏宝数
+		# 完成
+		sql1_lou_avg = "update player_info set lou_avg = lou_count / game_count " \
+					   "where id = {};".format(player1_id)
+		sql2_lou_avg = "update player_info set lou_avg = lou_count / game_count " \
+					   "where id = {};".format(player2_id)
+		sql3_lou_avg = "update player_info set lou_avg = lou_count / game_count " \
+					   "where id = {};".format(player3_id)
+		sql4_lou_avg = "update player_info set lou_avg = lou_count / game_count " \
+					   "where id = {};".format(player4_id)
+		cursor.execute(sql1_lou_avg)
+		cursor.execute(sql2_lou_avg)
+		cursor.execute(sql3_lou_avg)
+		cursor.execute(sql4_lou_avg)
+
+
+		# 更新上传record记录
+		# 完成
+		sql1_record = "update player_info set record = {} " \
+					  "where id = {};".format(record, player1_id)
+		sql2_record = "update player_info set record = {} " \
+					  "where id = {};".format(record, player2_id)
+		sql3_record = "update player_info set record = {} " \
+					  "where id = {};".format(record, player3_id)
+		sql4_record = "update player_info set record = {} " \
+					  "where id = {};".format(record, player4_id)
+		cursor.execute(sql1_record)
+		cursor.execute(sql2_record)
+		cursor.execute(sql3_record)
+		cursor.execute(sql4_record)
+
+
+		# 更新大赢家率
+		# 完成
+		sql1_big_winner_rate = "update player_info set big_winner_rate = big_winner_count / game_count " \
+							   "where id = {};".format(player1_id)
+		sql2_big_winner_rate = "update player_info set big_winner_rate = big_winner_count / game_count " \
+							   "where id = {};".format(player2_id)
+		sql3_big_winner_rate = "update player_info set big_winner_rate = big_winner_count / game_count " \
+							   "where id = {};".format(player3_id)
+		sql4_big_winner_rate = "update player_info set big_winner_rate = big_winner_count / game_count " \
+							   "where id = {};".format(player4_id)
+		cursor.execute(sql1_big_winner_rate)
+		cursor.execute(sql2_big_winner_rate)
+		cursor.execute(sql3_big_winner_rate)
+		cursor.execute(sql4_big_winner_rate)
+
+
+		# 更新最佳炮手率
+		# 完成
+		sql1_big_boomer_rate = "update player_info set big_boomer_rate = big_boomer_count / game_count " \
+							   "where id = {};".format(player1_id)
+		sql2_big_boomer_rate = "update player_info set big_boomer_rate = big_boomer_count / game_count " \
+							   "where id = {};".format(player2_id)
+		sql3_big_boomer_rate = "update player_info set big_boomer_rate = big_boomer_count / game_count " \
+							   "where id = {};".format(player3_id)
+		sql4_big_boomer_rate = "update player_info set big_boomer_rate = big_boomer_count / game_count " \
+							   "where id = {};".format(player4_id)
+		cursor.execute(sql1_big_boomer_rate)
+		cursor.execute(sql2_big_boomer_rate)
+		cursor.execute(sql3_big_boomer_rate)
+		cursor.execute(sql4_big_boomer_rate)
+
+
+		# 更新胜场率
+		# 完成
+		sql1_win_rate = "update player_info set win_rate = win_count / game_count " \
+						"where id = {};".format(player1_id)
+		sql2_win_rate = "update player_info set win_rate = win_count / game_count " \
+						"where id = {};".format(player2_id)
+		sql3_win_rate = "update player_info set win_rate = win_count / game_count " \
+						"where id = {};".format(player3_id)
+		sql4_win_rate = "update player_info set win_rate = win_count / game_count " \
+						"where id = {};".format(player4_id)
+		cursor.execute(sql1_win_rate)
+		cursor.execute(sql2_win_rate)
+		cursor.execute(sql3_win_rate)
+		cursor.execute(sql4_win_rate)
+
+
+		# 更新负场率
+		# 完成
+		sql1_lose_rate = "update player_info set lose_rate = lose_count / game_count " \
+						"where id = {};".format(player1_id)
+		sql2_lose_rate = "update player_info set lose_rate = lose_count / game_count " \
+						"where id = {};".format(player2_id)
+		sql3_lose_rate = "update player_info set lose_rate = lose_count / game_count " \
+						"where id = {};".format(player3_id)
+		sql4_lose_rate = "update player_info set lose_rate = lose_count / game_count " \
+						"where id = {};".format(player4_id)
+		cursor.execute(sql1_lose_rate)
+		cursor.execute(sql2_lose_rate)
+		cursor.execute(sql3_lose_rate)
+		cursor.execute(sql4_lose_rate)
+
+		conn.commit()
 	except:
-		pass
-
+		conn.rollback()
+		return "fail"
+	cursor.close()
 	conn.close()
 	return "success"
 
