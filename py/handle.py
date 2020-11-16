@@ -10,7 +10,7 @@ class Handle(object):
     def POST(self):
         try:
             webData = web.data()
-            print "Handle Post webdata is ", webData   #后台打日志
+            print("Handle Post webdata is ", webData)   #后台打日志
             recMsg = receive.parse_xml(webData)
             if isinstance(recMsg, receive.Msg):
                 toUser = recMsg.FromUserName
@@ -23,10 +23,21 @@ class Handle(object):
                     replyMsg = reply.TextMsg(toUser, fromUser, content)
                     return replyMsg.send()
                 elif recMsg.MsgType == "text":
+                    # 查询积分
                     if recMsg.Content == "积分":
                         content = database.score_query().encode("UTF-8")
+
+                    # 上传对局信息、写入数据
+                    elif recMsg.Content.startswith("upload-"):
+                        content = database.write_record(recMsg.Content[7:])
+
+                    # 对对子
                     elif recMsg.Content == "东边日出西边雨":
                         content = "红色奥迪治不举"
+                    elif recMsg.Content == "癞蛤蟆操青蛙":
+                        content = "呱呱呱呱呱呱"
+
+                    # 未知指令
                     else:
                         content = "欢迎关注CSDW大赛组委会！\n\n" \
                                   "回复【积分】获取最新积分情况\n\n" \
@@ -42,5 +53,5 @@ class Handle(object):
             else:
                 print("暂且不处理")
                 return reply.Msg().send()
-        except Exception, Argment:
-            return Argment
+        except Exception as e:
+            return e
