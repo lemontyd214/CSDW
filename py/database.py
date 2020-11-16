@@ -20,19 +20,20 @@ def score_query():
 			score = str(row[1])
 			query_result += u"\u3010" + name + u"\u3011\uFF1A" + score + "\n"
 	# print(query_result)
-	except:
+	except Exception as e:
 		print("Error! Unable to fetch data")
+		print(e)
 		return "fail"
 	cursor.close()
 	conn.close()
 	return query_result
 
 
-def check_new_player(id, cursor):
+def check_new_player(player_id, cursor):
 	# 检查是否为新玩家，TRUE为新玩家，FALSE为老玩家
 	# 若是新玩家在数据库中写一条空白新数据
 	# 完成
-	sql = "select * from player_name where id={};".format(id)
+	sql = "select * from player_name where id={};".format(player_id)
 	cursor.execute(sql)
 	result = cursor.fetchone()
 	if result:
@@ -40,12 +41,12 @@ def check_new_player(id, cursor):
 	return True
 
 
-def add_player(id, cursor):
+def add_player(player_id, cursor):
 	# 若为新玩家，在数据库中添加一条数据
 	# player_name添加随机名字，带后续修改；player_info添加默认空白数据
 	# 完成
-	add_player_name_sql = "insert into player_name (id,name) values ({},'xxxxx');".format(id)
-	add_player_info_sql = "insert into player_info (id) values ({});".format(id)
+	add_player_name_sql = "insert into player_name (id,name) values ({},'xxxxx');".format(player_id)
+	add_player_info_sql = "insert into player_info (id) values ({});".format(player_id)
 	cursor.execute(add_player_name_sql)
 	cursor.execute(add_player_info_sql)
 	return
@@ -56,14 +57,13 @@ def write_record(record):
 	# record为上传标准格式数据代码，str类型
 	conn = MySQLdb.connect("localhost", "root", "", "csdw", charset="utf8")
 	cursor = conn.cursor()
-
 	try:
 		# 首先设置数据库隔离级别
 		# 我们项目单次会更新较大批量数据，同时数据会有关联更新
 		# session isolation设置为read-uncommitted
-		sql_set_isolation = "set session.tx_isolation='read_uncommitted';"
+		sql_set_isolation = "set session transaction isolation level read uncommitted;"
 		cursor.execute(sql_set_isolation)
-
+		print("set isolation success")
 		# 读取标准格式数据代码，解码为具体数据
 		data = record.split(";")
 		game_time = int(data[0])
@@ -132,6 +132,7 @@ def write_record(record):
 			player4_big_winner = 1
 		else:
 			player4_big_winner = 0
+
 		# 最佳炮手
 		if big_boomer == player1_id:
 			player1_big_boomer = 1
@@ -149,7 +150,7 @@ def write_record(record):
 			player4_big_boomer = 1
 		else:
 			player4_big_boomer = 0
-
+		print("read data success")
 		# 将数据写入player_gamedetail库
 		# 完成
 		sql1_write = "insert into player_gamedetail values ({}, {}, {}, {}, {}, {}, {}, {}, {}, {})" \
@@ -208,14 +209,14 @@ def write_record(record):
 		print(result3[0])
 		print(result4[0])
 		if result1[0] != 0 or result2[0] != 0 or result3[0] != 0 or result4[0] != 0:
+			print("duplicate check fail")
 			raise Exception("Duplicate game detail")
-			# return "fail"
 
 		cursor.execute(sql1_write)
 		cursor.execute(sql2_write)
 		cursor.execute(sql3_write)
 		cursor.execute(sql4_write)
-
+		print("write player_gamedetail success")
 		# 完成写入player_gamedetail表，开始更新player_info表
 
 		# 更新积分
@@ -224,26 +225,28 @@ def write_record(record):
 		sql2_score = "update player_info set score = score + {} where id = {};".format(player2_score, player2_id)
 		sql3_score = "update player_info set score = score + {} where id = {};".format(player3_score, player3_id)
 		sql4_score = "update player_info set score = score + {} where id = {};".format(player4_score, player4_id)
-		sql_score_check = "select sum(score) from player_info"
-
+		sql_score_check = "select sum(score) from player_info;"
 		cursor.execute(sql1_score)
 		cursor.execute(sql2_score)
 		cursor.execute(sql3_score)
 		cursor.execute(sql4_score)
+		print("write sql success")
 		cursor.execute(sql_score_check)
+		print("score check sql success")
 		score_check_result = cursor.fetchone()
-		print("score_check_result = " + score_check_result)
-		if score_check_result != 0:
+		print("score_check_result = {}".format(score_check_result))
+		print(type(score_check_result))
+		if score_check_result[0] != 0:
+			print("score check fail")
 			raise Exception("Score check fail")
-			# return "fail"
 
 
 		# 更新参赛场数
 		# 完成
-		sql1_game_count = "update player_info set game_count = game_count + 1 where id = {}".format(player1_id)
-		sql2_game_count = "update player_info set game_count = game_count + 1 where id = {}".format(player2_id)
-		sql3_game_count = "update player_info set game_count = game_count + 1 where id = {}".format(player3_id)
-		sql4_game_count = "update player_info set game_count = game_count + 1 where id = {}".format(player4_id)
+		sql1_game_count = "update player_info set game_count = game_count + 1 where id = {};".format(player1_id)
+		sql2_game_count = "update player_info set game_count = game_count + 1 where id = {};".format(player2_id)
+		sql3_game_count = "update player_info set game_count = game_count + 1 where id = {};".format(player3_id)
+		sql4_game_count = "update player_info set game_count = game_count + 1 where id = {};".format(player4_id)
 
 		cursor.execute(sql1_game_count)
 		cursor.execute(sql2_game_count)
@@ -359,6 +362,9 @@ def write_record(record):
 				sql1_set_current_winning_streak_count = "update player_info set current_winning_streak_count = 1 where id = {};" \
 					.format(player1_id)
 				cursor.execute(sql1_set_current_winning_streak_count)
+				sql1_set_winning_streak_count = "update player_info set winning_streak_count = 1 " \
+												"where id = {} and winning_streak_count = 0;".format(player1_id)
+				cursor.execute(sql1_set_winning_streak_count)
 			else:  # 连胜不为0，在连胜，增加连胜次数
 				sql1_set_current_winning_streak_count = "update player_info set current_winning_streak_count = current_winning_streak_count + 1 where id = {};" \
 					.format(player1_id)
@@ -377,6 +383,9 @@ def write_record(record):
 				sql1_set_current_losing_streak_count = "update player_info set current_losing_streak_count = 1 where id = {};" \
 					.format(player1_id)
 				cursor.execute(sql1_set_current_losing_streak_count)
+				sql1_set_losing_streak_count = "update player_info set losing_streak_count = 1 " \
+											   "where id = {} and losing_streak_count = 0;".format(player1_id)
+				cursor.execute(sql1_set_losing_streak_count)
 			else:  # 连胜为0，在连败，增加连败次数
 				sql1_set_current_losing_streak_count = "update player_info set current_losing_streak_count = current_losing_streak_count + 1 where id = {};" \
 					.format(player1_id)
@@ -396,6 +405,9 @@ def write_record(record):
 				sql2_set_current_winning_streak_count = "update player_info set current_winning_streak_count = 1 where id = {};" \
 					.format(player2_id)
 				cursor.execute(sql2_set_current_winning_streak_count)
+				sql2_set_winning_streak_count = "update player_info set winning_streak_count = 1 " \
+												"where id = {} and winning_streak_count = 0;".format(player2_id)
+				cursor.execute(sql2_set_winning_streak_count)
 			else:  # 连胜不为0，在连胜，增加连胜次数
 				sql2_set_current_winning_streak_count = "update player_info set current_winning_streak_count = current_winning_streak_count + 1 where id = {};" \
 					.format(player2_id)
@@ -414,6 +426,9 @@ def write_record(record):
 				sql2_set_current_losing_streak_count = "update player_info set current_losing_streak_count = 1 where id = {};" \
 					.format(player2_id)
 				cursor.execute(sql2_set_current_losing_streak_count)
+				sql2_set_losing_streak_count = "update player_info set losing_streak_count = 1 " \
+											   "where id = {} and losing_streak_count = 0;".format(player2_id)
+				cursor.execute(sql2_set_losing_streak_count)
 			else:  # 连胜为0，在连败，增加连败次数
 				sql2_set_current_losing_streak_count = "update player_info set current_losing_streak_count = current_losing_streak_count + 1 where id = {};" \
 					.format(player2_id)
@@ -433,6 +448,9 @@ def write_record(record):
 				sql3_set_current_winning_streak_count = "update player_info set current_winning_streak_count = 1 where id = {};" \
 					.format(player3_id)
 				cursor.execute(sql3_set_current_winning_streak_count)
+				sql3_set_winning_streak_count = "update player_info set winning_streak_count = 1 " \
+												"where id = {} and winning_streak_count = 0;".format(player3_id)
+				cursor.execute(sql3_set_winning_streak_count)
 			else:  # 连胜不为0，在连胜，增加连胜次数
 				sql3_set_current_winning_streak_count = "update player_info set current_winning_streak_count = current_winning_streak_count + 1 where id = {};" \
 					.format(player3_id)
@@ -451,6 +469,9 @@ def write_record(record):
 				sql3_set_current_losing_streak_count = "update player_info set current_losing_streak_count = 1 where id = {};" \
 					.format(player3_id)
 				cursor.execute(sql3_set_current_losing_streak_count)
+				sql3_set_losing_streak_count = "update player_info set losing_streak_count = 1 " \
+											   "where id = {} and losing_streak_count = 0;".format(player3_id)
+				cursor.execute(sql3_set_losing_streak_count)
 			else:  # 连胜为0，在连败，增加连败次数
 				sql3_set_current_losing_streak_count = "update player_info set current_losing_streak_count = current_losing_streak_count + 1 where id = {};" \
 					.format(player3_id)
@@ -470,6 +491,9 @@ def write_record(record):
 				sql4_set_current_winning_streak_count = "update player_info set current_winning_streak_count = 1 where id = {};" \
 					.format(player4_id)
 				cursor.execute(sql4_set_current_winning_streak_count)
+				sql4_set_winning_streak_count = "update player_info set winning_streak_count = 1 " \
+												"where id = {} and winning_streak_count = 0;".format(player4_id)
+				cursor.execute(sql4_set_winning_streak_count)
 			else:  # 连胜不为0，在连胜，增加连胜次数
 				sql4_set_current_winning_streak_count = "update player_info set current_winning_streak_count = current_winning_streak_count + 1 where id = {};" \
 					.format(player4_id)
@@ -488,6 +512,9 @@ def write_record(record):
 				sql4_set_current_losing_streak_count = "update player_info set current_losing_streak_count = 1 where id = {};" \
 					.format(player4_id)
 				cursor.execute(sql4_set_current_losing_streak_count)
+				sql4_set_losing_streak_count = "update player_info set losing_streak_count = 1 " \
+											   "where id = {} and losing_streak_count = 0;".format(player4_id)
+				cursor.execute(sql4_set_losing_streak_count)
 			else:  # 连胜为0，在连败，增加连败次数
 				sql4_set_current_losing_streak_count = "update player_info set current_losing_streak_count = current_losing_streak_count + 1 where id = {};" \
 					.format(player4_id)
@@ -507,7 +534,6 @@ def write_record(record):
 			.format(player3_zhuang, player3_id)
 		sql4_zhuang_count = "update player_info set zhuang_count = zhuang_count + {} where id = {};" \
 			.format(player4_zhuang, player4_id)
-
 		cursor.execute(sql1_zhuang_count)
 		cursor.execute(sql2_zhuang_count)
 		cursor.execute(sql3_zhuang_count)
@@ -524,7 +550,6 @@ def write_record(record):
 			.format(player3_hu, player3_id)
 		sql4_hu_count = "update player_info set hu_count = hu_count + {} where id = {};" \
 			.format(player4_hu, player4_id)
-
 		cursor.execute(sql1_hu_count)
 		cursor.execute(sql2_hu_count)
 		cursor.execute(sql3_hu_count)
@@ -541,7 +566,6 @@ def write_record(record):
 			.format(player3_pao, player3_id)
 		sql4_pao_count = "update player_info set pao_count = pao_count + {} where id = {};" \
 			.format(player4_pao, player4_id)
-
 		cursor.execute(sql1_pao_count)
 		cursor.execute(sql2_pao_count)
 		cursor.execute(sql3_pao_count)
@@ -558,7 +582,6 @@ def write_record(record):
 			.format(player3_bao, player3_id)
 		sql4_bao_count = "update player_info set bao_count = bao_count + {} where id = {};" \
 			.format(player4_bao, player4_id)
-
 		cursor.execute(sql1_bao_count)
 		cursor.execute(sql2_bao_count)
 		cursor.execute(sql3_bao_count)
@@ -575,7 +598,6 @@ def write_record(record):
 			.format(player3_lou, player3_id)
 		sql4_lou_count = "update player_info set lou_count = lou_count + {} where id = {};" \
 			.format(player4_lou, player4_id)
-
 		cursor.execute(sql1_lou_count)
 		cursor.execute(sql2_lou_count)
 		cursor.execute(sql3_lou_count)
@@ -616,14 +638,14 @@ def write_record(record):
 
 		# 更新最少胡牌数
 		# 完成
-		sql1_hu_min_count = "update player_info set hu_min_count = {} " \
-							"where id = {} and hu_min_count > {};".format(player1_hu, player1_id, player1_hu)
-		sql2_hu_min_count = "update player_info set hu_min_count = {} " \
-							"where id = {} and hu_min_count > {};".format(player2_hu, player2_id, player2_hu)
-		sql3_hu_min_count = "update player_info set hu_min_count = {} " \
-							"where id = {} and hu_min_count > {};".format(player3_hu, player3_id, player3_hu)
-		sql4_hu_min_count = "update player_info set hu_min_count = {} " \
-							"where id = {} and hu_min_count > {};".format(player4_hu, player4_id, player4_hu)
+		sql1_hu_min_count = "update player_info set hu_min_count = if(hu_min_count = -1, {}, if(hu_min_count > {}, {}, hu_min_count)) " \
+							"where id = {};".format(player1_hu, player1_hu, player1_hu, player1_id)
+		sql2_hu_min_count = "update player_info set hu_min_count = if(hu_min_count = -1, {}, if(hu_min_count > {}, {}, hu_min_count)) " \
+							"where id = {};".format(player2_hu, player2_hu, player2_hu, player2_id)
+		sql3_hu_min_count = "update player_info set hu_min_count = if(hu_min_count = -1, {}, if(hu_min_count > {}, {}, hu_min_count)) " \
+							"where id = {};".format(player3_hu, player3_hu, player3_hu, player3_id)
+		sql4_hu_min_count = "update player_info set hu_min_count = if(hu_min_count = -1, {}, if(hu_min_count > {}, {}, hu_min_count)) " \
+							"where id = {};".format(player4_hu, player4_hu, player4_hu, player4_id)
 		cursor.execute(sql1_hu_min_count)
 		cursor.execute(sql2_hu_min_count)
 		cursor.execute(sql3_hu_min_count)
@@ -644,7 +666,6 @@ def write_record(record):
 		cursor.execute(sql2_pao_max_count)
 		cursor.execute(sql3_pao_max_count)
 		cursor.execute(sql4_pao_max_count)
-
 
 		# 更新最多摸宝数
 		# 完成
@@ -760,13 +781,13 @@ def write_record(record):
 
 		# 更新上传record记录
 		# 完成
-		sql1_record = "update player_info set record = {} " \
+		sql1_record = "update player_info set record = '{}' " \
 					  "where id = {};".format(record, player1_id)
-		sql2_record = "update player_info set record = {} " \
+		sql2_record = "update player_info set record = '{}' " \
 					  "where id = {};".format(record, player2_id)
-		sql3_record = "update player_info set record = {} " \
+		sql3_record = "update player_info set record = '{}' " \
 					  "where id = {};".format(record, player3_id)
-		sql4_record = "update player_info set record = {} " \
+		sql4_record = "update player_info set record = '{}' " \
 					  "where id = {};".format(record, player4_id)
 		cursor.execute(sql1_record)
 		cursor.execute(sql2_record)
@@ -837,8 +858,11 @@ def write_record(record):
 		cursor.execute(sql3_lose_rate)
 		cursor.execute(sql4_lose_rate)
 
+		print("all sql run success")
+
 		conn.commit()
-	except:
+	except Exception as e:
+		print(e)
 		conn.rollback()
 		return "fail"
 	cursor.close()
@@ -847,7 +871,6 @@ def write_record(record):
 
 
 if __name__ == "__main__":
-	# write_result = write_record("20200316;462160,-230,4,6,4,0,0;231508,-136,2,4,0,0,1;741920,106,10,5,1,0,2;"
-	#                             "253786,260,6,7,4,2,3;253786;462160")
-	# print(write_result)
-	score_query()
+	write_result = write_record("20201111;919989,-38,4,5,3,1,1;704692,48,7,6,2,1,1;741920,-24,7,5,2,1,1;724364,14,4,6,7,1,1;704692;724364")
+	print(write_result)
+	# score_query()
