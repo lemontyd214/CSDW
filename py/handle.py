@@ -5,14 +5,17 @@ import reply
 import receive
 import web
 import database
+import time
 
 
 class Handle(object):
+
     def POST(self):
         try:
             webData = web.data()
             print("Handle Post webdata is ", webData)  # 后台打日志
             recMsg = receive.parse_xml(webData)
+            get_room_id_his_time = 0
             if isinstance(recMsg, receive.Msg):
                 toUser = recMsg.FromUserName
                 fromUser = recMsg.ToUserName
@@ -31,7 +34,8 @@ class Handle(object):
                         content = database.score_query().encode("UTF-8")
 
                     elif recMsg.Content == "房号":
-                        content = database.get_room_id()
+                        # get_room_id_his_time = database.
+                            content = database.get_room_id()
 
                     # ####### 上传类
                     # 上传对局信息，写入数据
@@ -53,7 +57,7 @@ class Handle(object):
                     else:
                         content = "欢迎关注CSDW大赛组委会！\n\n" \
                                   "回复【积分】获取最新积分情况\n\n" \
-                                  "回复【房号】获取房间号(随用随取，不要乱试)\n\n" \
+                                  "回复【房号】获取房间号（随用随取，不要乱试）\n\n" \
                                   "更多功能开发中，敬请期待！"
                     replyMsg = reply.TextMsg(toUser, fromUser, content)
                     return replyMsg.send()
@@ -67,4 +71,5 @@ class Handle(object):
                 print("暂且不处理")
                 return reply.Msg().send()
         except Exception as e:
+            print(e)
             return e

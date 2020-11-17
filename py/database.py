@@ -2,6 +2,7 @@
 # filename: database.py
 
 import MySQLdb
+import time
 
 
 def score_query():
@@ -23,7 +24,7 @@ def score_query():
     except Exception as e:
         print("Error! Unable to fetch data")
         print(e)
-        return "fail"
+        return "获取积分失败"
     cursor.close()
     conn.close()
     return query_result
@@ -56,7 +57,7 @@ def add_room(record):
     # 向房号池中添加新的房间号
     # record为房号上传代码，str类型
     # 标准格式如：12345,23456,34567,45678
-    conn = MySQLdb.connect("localhost", "root", "", "room_list", charset="utf8")
+    conn = MySQLdb.connect("localhost", "root", "", "csdw", charset="utf8")
     cursor = conn.cursor()
     try:
         # 读取标准格式数据代码，解码为具体数据
@@ -70,18 +71,30 @@ def add_room(record):
         conn.commit()
     except:
         conn.rollback()
-        return "fail"
+        return "添加房号失败"
     cursor.close()
     conn.close()
-    return "success"
+    return "添加房号成功"
 
 
 def get_room_id():
     # 获取一个房号，并从房号池中移除
-    conn = MySQLdb.connect("localhost", "root", "", "room_list", charset="utf8")
+    conn = MySQLdb.connect("localhost", "root", "", "csdw", charset="utf8")
     cursor = conn.cursor()
     room_list_empty = False
+    room_list_in_cd = False
+    cd_time_left = 0
     try:
+        # 先判断是否已经过了5分钟冷却时间
+        sql_check_time_his = "select time_his from time_his;"
+        cursor.execute(sql_check_time_his)
+        time_his = cursor.fetchone()[0]
+        # 如果不到5分钟，不取房号，反馈剩余冷却时间
+        if time.time() - time_his < 300:
+            room_list_in_cd = True
+            cd_time_left = int(300 + time_his - time.time())
+            raise Exception
+        
         # 查看池里是否还有剩余房号
         sql_get_remaining_room_id_count = "select count(id) from room_list;"
         cursor.execute(sql_get_remaining_room_id_count)
@@ -105,14 +118,19 @@ def get_room_id():
         cursor.execute(sql_remove_primary_key)
         sql_create_primary_key = "alter table room_list add id int not null primary key auto_increment first;"
         cursor.execute(sql_create_primary_key)
-        print("重新生成主键成功")
+        
+        # 到了5分钟，取完房号后，更新取房号历史时间点
+        sql_update_time_his = "update time_his set time_his = {};".format(time.time())
+        cursor.execute(sql_update_time_his)
         
         conn.commit()
     except:
         conn.rollback()
         if room_list_empty:
             return "无剩余房号，请联系hg添加"
-        return "fail"
+        if room_list_in_cd:
+            return "获取房号冷却中，剩余{}秒".format(cd_time_left)
+        return "获取房号失败"
     cursor.close()
     conn.close()
     return room_id
@@ -933,10 +951,10 @@ def write_record(record):
     except Exception as e:
         print(e)
         conn.rollback()
-        return "fail"
+        return "写入数据失败"
     cursor.close()
     conn.close()
-    return "success"
+    return "写入数据成功"
 
 
 if __name__ == "__main__":
