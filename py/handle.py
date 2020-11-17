@@ -37,7 +37,7 @@ class Handle(object):
                     elif recMsg.Content == "癞蛤蟆操青蛙":
                         content = "呱呱呱呱呱呱"
 
-                    # 未知指令
+                    # 其余未知关键词
                     else:
                         content = "欢迎关注CSDW大赛组委会！\n\n" \
                                   "回复【积分】获取最新积分情况\n\n" \
