@@ -62,10 +62,18 @@ def add_room(record):
     try:
         # 读取标准格式数据代码，解码为具体数据
         data = record.split(",")
+        duplicate = []
         for room_id in data:
             if len(room_id) != 5:
                 print("房号长度不合法")
                 raise Exception
+            # 判重
+            sql_check_room_id_existance = "select room_id from room_list where room_id = {};".format(room_id)
+            cursor.execute(sql_check_room_id_existance)
+            result = cursor.fetchone()
+            if result is not None:
+                duplicate.append(room_id)
+                continue
             sql_add_room_id = "insert into room_list (room_id) values ('{}')".format(room_id)
             cursor.execute(sql_add_room_id)
         conn.commit()
@@ -74,7 +82,7 @@ def add_room(record):
         return "添加房号失败"
     cursor.close()
     conn.close()
-    return "添加房号成功"
+    return "添加房号成功{}个；重复{}个".format(len(data) - len(duplicate), len(duplicate))
 
 
 def get_room_id():
