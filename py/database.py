@@ -429,170 +429,210 @@ def write_record(record):
         sql1_get_current_winning_streak_count = "select current_winning_streak_count from player_info where id = {};" \
             .format(player1_id)
         cursor.execute(sql1_get_current_winning_streak_count)
-        result1 = cursor.fetchone()
+        result1 = cursor.fetchone()[0]
 
         sql2_get_current_winning_streak_count = "select current_winning_streak_count from player_info where id = {};" \
             .format(player2_id)
         cursor.execute(sql2_get_current_winning_streak_count)
-        result2 = cursor.fetchone()
+        result2 = cursor.fetchone()[0]
 
         sql3_get_current_winning_streak_count = "select current_winning_streak_count from player_info where id = {};" \
             .format(player3_id)
         cursor.execute(sql3_get_current_winning_streak_count)
-        result3 = cursor.fetchone()
+        result3 = cursor.fetchone()[0]
 
         sql4_get_current_winning_streak_count = "select current_winning_streak_count from player_info where id = {};" \
             .format(player4_id)
         cursor.execute(sql4_get_current_winning_streak_count)
-        result4 = cursor.fetchone()
+        result4 = cursor.fetchone()[0]
 
         if player1_score < 0:  # 如果赢了 清空最长连败
             if result1 == 0:  # 连胜为0，说明在连败，需要清空
                 sql1_set_current_losing_streak_count = "update player_info set current_losing_streak_count = 0 where id = {};" \
                     .format(player1_id)
                 cursor.execute(sql1_set_current_losing_streak_count)
+                print("{}当前连败设为0".format(player1_id))
                 sql1_set_current_winning_streak_count = "update player_info set current_winning_streak_count = 1 where id = {};" \
                     .format(player1_id)
                 cursor.execute(sql1_set_current_winning_streak_count)
+                print("{}当前连胜设为1".format(player1_id))
                 sql1_set_winning_streak_count = "update player_info set winning_streak_count = current_winning_streak_count " \
                                                 "where id = {} and winning_streak_count < current_winning_streak_count;".format(player1_id)
                 cursor.execute(sql1_set_winning_streak_count)
+                print("{}更新连胜".format(player1_id))
             else:  # 连胜不为0，在连胜，增加连胜次数
                 sql1_set_current_winning_streak_count = "update player_info set current_winning_streak_count = current_winning_streak_count + 1 where id = {};" \
                     .format(player1_id)
                 cursor.execute(sql1_set_current_winning_streak_count)
+                print("{}连胜+1".format(player1_id))
                 sql1_set_winning_streak_count = "update player_info set winning_streak_count = current_winning_streak_count " \
                                                 "where id = {} and winning_streak_count < current_winning_streak_count;".format(player1_id)
                 cursor.execute(sql1_set_winning_streak_count)
+                print("{}更新连胜".format(player1_id))
         else:  # 如果输了 清空最长连胜
             if result1 != 0:  # 连胜不为0，在连胜，需要清空
                 sql1_set_current_winning_streak_count = "update player_info set current_winning_streak_count = 0 where id = {};" \
                     .format(player1_id)
                 cursor.execute(sql1_set_current_winning_streak_count)
+                print("{}当前连胜设为0".format(player1_id))
                 sql1_set_current_losing_streak_count = "update player_info set current_losing_streak_count = 1 where id = {};" \
                     .format(player1_id)
                 cursor.execute(sql1_set_current_losing_streak_count)
+                print("{}当前连败设为1".format(player1_id))
                 sql1_set_losing_streak_count = "update player_info set losing_streak_count = current_losing_streak_count " \
                                                "where id = {} and losing_streak_count < current_losing_streak_count;".format(player1_id)
                 cursor.execute(sql1_set_losing_streak_count)
+                print("{}更新连败".format(player1_id))
             else:  # 连胜为0，在连败，增加连败次数
                 sql1_set_current_losing_streak_count = "update player_info set current_losing_streak_count = current_losing_streak_count + 1 where id = {};" \
                     .format(player1_id)
                 cursor.execute(sql1_set_current_losing_streak_count)
+                print("{}连败+1".format(player1_id))
                 sql1_set_losing_streak_count = "update player_info set losing_streak_count = current_losing_streak_count " \
                                                " where id = {} and losing_streak_count < current_losing_streak_count;".format(player1_id)
                 cursor.execute(sql1_set_losing_streak_count)
+                print("{}更新连败".format(player1_id))
 
         if player2_score < 0:  # 如果赢了 清空最长连败
             if result2 == 0:  # 连胜为0，说明在连败，需要清空
                 sql2_set_current_losing_streak_count = "update player_info set current_losing_streak_count = 0 where id = {};" \
                     .format(player2_id)
                 cursor.execute(sql2_set_current_losing_streak_count)
+                print("{}当前连败设为0".format(player2_id))
                 sql2_set_current_winning_streak_count = "update player_info set current_winning_streak_count = 1 where id = {};" \
                     .format(player2_id)
                 cursor.execute(sql2_set_current_winning_streak_count)
+                print("{}当前连胜设为1".format(player2_id))
                 sql2_set_winning_streak_count = "update player_info set winning_streak_count = current_winning_streak_count " \
                                                 "where id = {} and winning_streak_count < current_winning_streak_count;".format(player2_id)
                 cursor.execute(sql2_set_winning_streak_count)
+                print("{}更新连胜".format(player2_id))
             else:  # 连胜不为0，在连胜，增加连胜次数
                 sql2_set_current_winning_streak_count = "update player_info set current_winning_streak_count = current_winning_streak_count + 1 where id = {};" \
                     .format(player2_id)
                 cursor.execute(sql2_set_current_winning_streak_count)
+                print("{}连胜+1".format(player2_id))
                 sql2_set_winning_streak_count = "update player_info set winning_streak_count = current_winning_streak_count " \
                                                 "where id = {} and winning_streak_count < current_winning_streak_count;".format(player2_id)
                 cursor.execute(sql2_set_winning_streak_count)
+                print("{}更新连胜".format(player2_id))
         else:  # 如果输了 清空最长连胜
             if result2 != 0:  # 连胜不为0，在连胜，需要清空
                 sql2_set_current_winning_streak_count = "update player_info set current_winning_streak_count = 0 where id = {};" \
                     .format(player2_id)
                 cursor.execute(sql2_set_current_winning_streak_count)
+                print("{}当前连胜设为0".format(player2_id))
                 sql2_set_current_losing_streak_count = "update player_info set current_losing_streak_count = 1 where id = {};" \
                     .format(player2_id)
                 cursor.execute(sql2_set_current_losing_streak_count)
+                print("{}当前连败设为1".format(player2_id))
                 sql2_set_losing_streak_count = "update player_info set losing_streak_count = current_losing_streak_count " \
                                                "where id = {} and losing_streak_count < current_losing_streak_count;".format(player2_id)
                 cursor.execute(sql2_set_losing_streak_count)
+                print("{}更新连败".format(player2_id))
             else:  # 连胜为0，在连败，增加连败次数
                 sql2_set_current_losing_streak_count = "update player_info set current_losing_streak_count = current_losing_streak_count + 1 where id = {};" \
                     .format(player2_id)
                 cursor.execute(sql2_set_current_losing_streak_count)
+                print("{}当前连败+1".format(player2_id))
                 sql2_set_losing_streak_count = "update player_info set losing_streak_count = current_losing_streak_count " \
                                                "where id = {} and losing_streak_count < current_losing_streak_count;".format(player2_id)
                 cursor.execute(sql2_set_losing_streak_count)
+                print("{}更新连败".format(player2_id))
 
         if player3_score < 0:  # 如果赢了 清空最长连败
             if result3 == 0:  # 连胜为0，说明在连败，需要清空
                 sql3_set_current_losing_streak_count = "update player_info set current_losing_streak_count = 0 where id = {};" \
                     .format(player3_id)
                 cursor.execute(sql3_set_current_losing_streak_count)
+                print("{}当前连败设为0".format(player3_id))
                 sql3_set_current_winning_streak_count = "update player_info set current_winning_streak_count = 1 where id = {};" \
                     .format(player3_id)
                 cursor.execute(sql3_set_current_winning_streak_count)
+                print("{}当前连胜设为1".format(player3_id))
                 sql3_set_winning_streak_count = "update player_info set winning_streak_count = current_winning_streak_count " \
                                                 "where id = {} and winning_streak_count < current_winning_streak_count;".format(player3_id)
                 cursor.execute(sql3_set_winning_streak_count)
+                print("{}更新连胜".format(player3_id))
             else:  # 连胜不为0，在连胜，增加连胜次数
                 sql3_set_current_winning_streak_count = "update player_info set current_winning_streak_count = current_winning_streak_count + 1 where id = {};" \
                     .format(player3_id)
                 cursor.execute(sql3_set_current_winning_streak_count)
+                print("{}当前连胜+1".format(player3_id))
                 sql3_set_winning_streak_count = "update player_info set winning_streak_count = current_winning_streak_count " \
                                                 "where id = {} and winning_streak_count < current_winning_streak_count;".format(player3_id)
                 cursor.execute(sql3_set_winning_streak_count)
+                print("{}更新连胜".format(player3_id))
         else:  # 如果输了 清空最长连胜
             if result3 != 0:  # 连胜不为0，在连胜，需要清空
                 sql3_set_current_winning_streak_count = "update player_info set current_winning_streak_count = 0 where id = {};" \
                     .format(player3_id)
                 cursor.execute(sql3_set_current_winning_streak_count)
+                print("{}当前连胜设为0".format(player3_id))
                 sql3_set_current_losing_streak_count = "update player_info set current_losing_streak_count = 1 where id = {};" \
                     .format(player3_id)
                 cursor.execute(sql3_set_current_losing_streak_count)
+                print("{}当前连败设为1".format(player3_id))
                 sql3_set_losing_streak_count = "update player_info set losing_streak_count = current_losing_streak_count " \
                                                "where id = {} and losing_streak_count < current_losing_streak_count;".format(player3_id)
                 cursor.execute(sql3_set_losing_streak_count)
+                print("{}更新连败".format(player3_id))
             else:  # 连胜为0，在连败，增加连败次数
                 sql3_set_current_losing_streak_count = "update player_info set current_losing_streak_count = current_losing_streak_count + 1 where id = {};" \
                     .format(player3_id)
                 cursor.execute(sql3_set_current_losing_streak_count)
+                print("{}当前连败+1".format(player3_id))
                 sql3_set_losing_streak_count = "update player_info set losing_streak_count = current_losing_streak_count " \
                                                "where id = {} and losing_streak_count < current_losing_streak_count;".format(player3_id)
                 cursor.execute(sql3_set_losing_streak_count)
+                print("{}更新连败".format(player3_id))
 
         if player4_score < 0:  # 如果赢了 清空最长连败
             if result4 == 0:  # 连胜为0，说明在连败，需要清空
                 sql4_set_current_losing_streak_count = "update player_info set current_losing_streak_count = 0 where id = {};" \
                     .format(player4_id)
                 cursor.execute(sql4_set_current_losing_streak_count)
+                print("{}当前连败设为0".format(player4_id))
                 sql4_set_current_winning_streak_count = "update player_info set current_winning_streak_count = 1 where id = {};" \
                     .format(player4_id)
                 cursor.execute(sql4_set_current_winning_streak_count)
+                print("{}当前连胜设为1".format(player4_id))
                 sql4_set_winning_streak_count = "update player_info set winning_streak_count = current_winning_streak_count " \
                                                 "where id = {} and winning_streak_count < current_winning_streak_count;".format(player4_id)
                 cursor.execute(sql4_set_winning_streak_count)
+                print("{}更新连胜".format(player4_id))
             else:  # 连胜不为0，在连胜，增加连胜次数
                 sql4_set_current_winning_streak_count = "update player_info set current_winning_streak_count = current_winning_streak_count + 1 where id = {};" \
                     .format(player4_id)
                 cursor.execute(sql4_set_current_winning_streak_count)
+                print("{}当前连胜+1".format(player4_id))
                 sql4_set_winning_streak_count = "update player_info set winning_streak_count = current_winning_streak_count " \
                                                 "where id = {} and winning_streak_count < current_winning_streak_count;".format(player4_id)
                 cursor.execute(sql4_set_winning_streak_count)
+                print("{}更新连胜".format(player4_id))
         else:  # 如果输了 清空最长连胜
             if result4 != 0:  # 连胜不为0，在连胜，需要清空
                 sql4_set_current_winning_streak_count = "update player_info set current_winning_streak_count = 0 where id = {};" \
                     .format(player4_id)
                 cursor.execute(sql4_set_current_winning_streak_count)
+                print("{}当前连胜设为0".format(player4_id))
                 sql4_set_current_losing_streak_count = "update player_info set current_losing_streak_count = 1 where id = {};" \
                     .format(player4_id)
                 cursor.execute(sql4_set_current_losing_streak_count)
+                print("{}当前连败设为1".format(player4_id))
                 sql4_set_losing_streak_count = "update player_info set losing_streak_count = current_losing_streak_count " \
                                                "where id = {} and losing_streak_count < current_losing_streak_count;".format(player4_id)
                 cursor.execute(sql4_set_losing_streak_count)
+                print("{}更新连败".format(player4_id))
             else:  # 连胜为0，在连败，增加连败次数
                 sql4_set_current_losing_streak_count = "update player_info set current_losing_streak_count = current_losing_streak_count + 1 where id = {};" \
                     .format(player4_id)
                 cursor.execute(sql4_set_current_losing_streak_count)
+                print("{}当前连败+1".format(player4_id))
                 sql4_set_losing_streak_count = "update player_info set losing_streak_count = current_losing_streak_count " \
                                                "where id = {} and losing_streak_count < current_losing_streak_count;".format(player4_id)
                 cursor.execute(sql4_set_losing_streak_count)
+                print("{}更新连败".format(player4_id))
 
 
         # 更新坐庄数
