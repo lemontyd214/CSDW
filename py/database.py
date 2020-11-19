@@ -5,13 +5,47 @@ import MySQLdb
 import time
 
 
-def score_query():
+def query_info(query_id):
     # 获取玩家总积分情况
     # 从player_info中读score
     # 完成
     conn = MySQLdb.connect("localhost", "root", "", "csdw", charset="utf8")
     cursor = conn.cursor()
-    sql = "select a.name, b.score from player_name a, player_info b where a.id=b.id order by b.score desc;"
+    query_list = {
+        '0': 'score',
+        '1': 'game_count',
+        '2': 'big_winner_count',
+        '3': 'big_boomer_count',
+        '4': 'win_count',
+        '5': 'lose_count',
+        '6': 'big_winner_rate',
+        '7': 'big_boomer_rate',
+        '8': 'win_rate',
+        '9': 'lose_rate',
+        '10': 'win_max',
+        '11': 'lose_max',
+        '12': 'winning_streak_count',
+        '13': 'losing_streak_count',
+        '14': 'zhuang_count',
+        '15': 'hu_count',
+        '16': 'pao_count',
+        '17': 'bao_count',
+        '18': 'lou_count',
+        '19': 'zhuang_max_count',
+        '20': 'hu_max_count',
+        '21': 'hu_min_count',
+        '22': 'pao_max_count',
+        '23': 'bao_max_count',
+        '24': 'lou_max_count',
+        '25': 'zhuang_avg',
+        '26': 'hu_avg',
+        '27': 'pao_avg',
+        '28': 'bao_avg',
+        '29': 'lou_avg',
+        '30': 'current_winning_streak_count',
+        '31': 'current_losing_streak_count'
+    }
+    sql = "select a.name, b.{} from player_name a, player_info b where a.id = b.id order by b.{} desc;".format(query_list[query_id], query_list[query_id])
     query_result = ""
     try:
         cursor.execute(sql)
@@ -34,7 +68,7 @@ def check_new_player(player_id, cursor):
     # 检查是否为新玩家，TRUE为新玩家，FALSE为老玩家
     # 若是新玩家在数据库中写一条空白新数据
     # 完成
-    sql = "select * from player_name where id={};".format(player_id)
+    sql = "select * from player_name where id = {};".format(player_id)
     cursor.execute(sql)
     result = cursor.fetchone()
     if result:
@@ -46,8 +80,8 @@ def add_player(player_id, cursor):
     # 若为新玩家，在数据库中添加一条数据
     # player_name添加随机名字，带后续修改；player_info添加默认空白数据
     # 完成
-    add_player_name_sql = "insert into player_name (id,name) values ({},'xxxxx');".format(player_id)
-    add_player_info_sql = "insert into player_info (id) values ({});".format(player_id)
+    add_player_name_sql = "insert into player_name (id, name) values ({}, 'xxxxx');".format(player_id)
+    add_player_info_sql = "insert into player_info (id, name) values ({}, 'xxxxx');".format(player_id)
     cursor.execute(add_player_name_sql)
     cursor.execute(add_player_info_sql)
     return
