@@ -175,7 +175,7 @@ def get_room_id():
         return "获取房号失败"
     cursor.close()
     conn.close()
-    return room_id
+    return "取号成功：{}\n剩余房号：{}个".format(room_id, remaining_room_id_count[0] - 1)
 
 
 def write_record(record):
