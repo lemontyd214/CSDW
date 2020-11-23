@@ -101,45 +101,35 @@ namespace 上传代码生成器
         private void button1_Click(object sender, EventArgs e)
         {
             // 检查id是否有空白
-            if (player1_id.Text == "")
+            if (player1_id.SelectedItem is null)
             {
-                MessageBox.Show("player1_id为空，请检查！");
+                MessageBox.Show("player1_id未选择，请检查！");
                 return;
             }
-            if (player2_id.Text == "")
+            if (player2_id.SelectedItem is null)
             {
-                MessageBox.Show("player2_id为空，请检查！");
+                MessageBox.Show("player2_id未选择，请检查！");
                 return;
             }
-            if (player3_id.Text == "")
+            if (player3_id.SelectedItem is null)
             {
-                MessageBox.Show("player3_id为空，请检查！");
+                MessageBox.Show("player3_id未选择，请检查！");
                 return;
             }
-            if (player4_id.Text == "")
+            if (player4_id.SelectedItem is null)
             {
-                MessageBox.Show("player4_id为空，请检查！");
+                MessageBox.Show("player4_id未选择，请检查！");
                 return;
             }
-            // 检查id是否为6位
-            if (player1_id.Text.Length != 6)
+            // 检查是否有重复id
+            if (player1_id.SelectedItem.ToString() == player2_id.SelectedItem.ToString() ||
+                player1_id.SelectedItem.ToString() == player3_id.SelectedItem.ToString() ||
+                player1_id.SelectedItem.ToString() == player4_id.SelectedItem.ToString() ||
+                player2_id.SelectedItem.ToString() == player3_id.SelectedItem.ToString() ||
+                player2_id.SelectedItem.ToString() == player4_id.SelectedItem.ToString() ||
+                player3_id.SelectedItem.ToString() == player4_id.SelectedItem.ToString())
             {
-                MessageBox.Show("player1_id长度错误，请检查！");
-                return;
-            }
-            if (player2_id.Text.Length != 6)
-            {
-                MessageBox.Show("player2_id长度错误，请检查！");
-                return;
-            }
-            if (player3_id.Text.Length != 6)
-            {
-                MessageBox.Show("player3_id长度错误，请检查！");
-                return;
-            }
-            if (player4_id.Text.Length != 6)
-            {
-                MessageBox.Show("player4_id长度错误，请检查！");
+                MessageBox.Show("id有重复，请检查！");
                 return;
             }
             // 检查score是否有空白
@@ -299,23 +289,23 @@ namespace 上传代码生成器
                 return;
             }
             string result = "upload-" + date.Text + ";" +
-                player1_id.Text + "," + player1_score.Text + "," +
+                player1_id.SelectedItem.ToString().Split(' ')[2] + "," + player1_score.Text + "," +
                 player1_hu.Text + "," + player1_zhuang.Text + "," + player1_pao.Text + "," + player1_bao.Text + "," + player1_lou.Text + ";" +
-                player2_id.Text + "," + player2_score.Text + "," +
+                player2_id.SelectedItem.ToString().Split(' ')[2] + "," + player2_score.Text + "," +
                 player2_hu.Text + "," + player2_zhuang.Text + "," + player2_pao.Text + "," + player2_bao.Text + "," + player2_lou.Text + ";" +
-                player3_id.Text + "," + player3_score.Text + "," +
+                player3_id.SelectedItem.ToString().Split(' ')[2] + "," + player3_score.Text + "," +
                 player3_hu.Text + "," + player3_zhuang.Text + "," + player3_pao.Text + "," + player3_bao.Text + "," + player3_lou.Text + ";" +
-                player4_id.Text + "," + player4_score.Text + "," +
+                player4_id.SelectedItem.ToString().Split(' ')[2] + "," + player4_score.Text + "," +
                 player4_hu.Text + "," + player4_zhuang.Text + "," + player4_pao.Text + "," + player4_bao.Text + "," + player4_lou.Text + ";";
-            if (player1_big_winner.Checked) result += player1_id.Text + ";";
-            else if (player2_big_winner.Checked) result += player2_id.Text + ";";
-            else if (player3_big_winner.Checked) result += player3_id.Text + ";";
-            else if (player4_big_winner.Checked) result += player4_id.Text + ";";
+            if (player1_big_winner.Checked) result += player1_id.SelectedItem.ToString().Split(' ')[2] + ";";
+            else if (player2_big_winner.Checked) result += player2_id.SelectedItem.ToString().Split(' ')[2] + ";";
+            else if (player3_big_winner.Checked) result += player3_id.SelectedItem.ToString().Split(' ')[2] + ";";
+            else if (player4_big_winner.Checked) result += player4_id.SelectedItem.ToString().Split(' ')[2] + ";";
 
-            if (player1_big_boomer.Checked) result += player1_id.Text;
-            else if (player2_big_boomer.Checked) result += player2_id.Text;
-            else if (player3_big_boomer.Checked) result += player3_id.Text;
-            else if (player4_big_boomer.Checked) result += player4_id.Text;
+            if (player1_big_boomer.Checked) result += player1_id.SelectedItem.ToString().Split(' ')[2];
+            else if (player2_big_boomer.Checked) result += player2_id.SelectedItem.ToString().Split(' ')[2];
+            else if (player3_big_boomer.Checked) result += player3_id.SelectedItem.ToString().Split(' ')[2];
+            else if (player4_big_boomer.Checked) result += player4_id.SelectedItem.ToString().Split(' ')[2];
 
             upload_code.Text = result;
             MessageBox.Show("代码生成成功！");
@@ -337,6 +327,66 @@ namespace 上传代码生成器
             Clipboard.SetDataObject(upload_code.Text);
             MessageBox.Show("复制成功！");
             return;
+        }
+
+        private void clear_button_Click(object sender, EventArgs e)
+        {
+            player1_id.Text = "";
+            player1_score.Text = "";
+            player1_hu.Text = "";
+            player1_zhuang.Text = "";
+            player1_pao.Text = "";
+            player1_bao.Text = "";
+            player1_lou.Text = "";
+
+            player2_id.Text = "";
+            player2_score.Text = "";
+            player2_hu.Text = "";
+            player2_zhuang.Text = "";
+            player2_pao.Text = "";
+            player2_bao.Text = "";
+            player2_lou.Text = "";
+
+            player3_id.Text = "";
+            player3_score.Text = "";
+            player3_hu.Text = "";
+            player3_zhuang.Text = "";
+            player3_pao.Text = "";
+            player3_bao.Text = "";
+            player3_lou.Text = "";
+
+            player4_id.Text = "";
+            player4_score.Text = "";
+            player4_hu.Text = "";
+            player4_zhuang.Text = "";
+            player4_pao.Text = "";
+            player4_bao.Text = "";
+            player4_lou.Text = "";
+
+            player1_big_winner.Checked = false;
+            player2_big_winner.Checked = false;
+            player3_big_winner.Checked = false;
+            player4_big_winner.Checked = false;
+
+            player1_big_boomer.Checked = false;
+            player2_big_boomer.Checked = false;
+            player3_big_boomer.Checked = false;
+            player4_big_boomer.Checked = false;
+
+            date.Text = "";
+
+            upload_code.Text = "";
+            return;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
