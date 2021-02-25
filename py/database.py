@@ -9,7 +9,7 @@ def query_info(query_id):
     # 获取玩家总积分情况
     # 从player_info中读score
     # 完成
-    conn = MySQLdb.connect("localhost", "root", "", "csdw", charset="utf8")
+    conn = MySQLdb.connect("localhost", "root", "", "csdw_2021", charset="utf8")
     cursor = conn.cursor()
     query_list = {
         '0': 'score',
@@ -45,15 +45,19 @@ def query_info(query_id):
         '30': 'current_winning_streak_count',
         '31': 'current_losing_streak_count'
     }
-    sql = "select a.name, b.{} from player_name a, player_info b where a.id = b.id order by b.{} desc;".format(query_list[query_id], query_list[query_id])
+    sql = "select name, {} from player_info order by {} desc;".format(query_list[query_id], query_list[query_id])
     query_result = ""
     try:
         cursor.execute(sql)
         results = cursor.fetchall()
-        for row in results:
-            name = row[0]
-            score = str(row[1])
-            query_result += u"\u3010" + name + u"\u3011\uFF1A" + score + "\n"
+        if results is ():
+            print("暂无数据")
+            query_result = u"\u672c\u8d5b\u5b63\u6682\u65e0\u6570\u636e"
+        else:
+            for row in results:
+                name = row[0]
+                score = str(row[1])
+                query_result += u"\u3010" + name + u"\u3011\uFF1A" + score + "\n"
     # print(query_result)
     except Exception as e:
         print("Error! Unable to fetch data")
@@ -68,7 +72,7 @@ def check_new_player(player_id, cursor):
     # 检查是否为新玩家，TRUE为新玩家，FALSE为老玩家
     # 若是新玩家在数据库中写一条空白新数据
     # 完成
-    sql = "select * from player_name where id = {};".format(player_id)
+    sql = "select name from player_info where id = {};".format(player_id)
     cursor.execute(sql)
     result = cursor.fetchone()
     if result:
@@ -80,9 +84,27 @@ def add_player(player_id, cursor):
     # 若为新玩家，在数据库中添加一条数据
     # player_name添加随机名字，带后续修改；player_info添加默认空白数据
     # 完成
-    add_player_name_sql = "insert into player_name (id, name) values ({}, 'xxxxx');".format(player_id)
-    add_player_info_sql = "insert into player_info (id, name) values ({}, 'xxxxx');".format(player_id)
-    cursor.execute(add_player_name_sql)
+    # 维护一个老玩家id - name 键值对
+    player_name = {
+        231508: "来哥",
+        253786: "寒哥",
+        256510: "帅神",
+        462160: "池哥",
+        586071: "培根",
+        587137: "皮哥",
+        704692: "刀哥",
+        709514: "刚子",
+        724364: "能哥",
+        741920: "孙哥",
+        758315: "石阳",
+        768637: "TLS",
+        908340: "硕颀",
+        919989: "XDS"
+    }
+    if player_id in player_name:
+        add_player_info_sql = "insert into player_info (id, name) values ({}, '{}');".format(player_id, player_name[player_id])
+    else:
+        add_player_info_sql = "insert into player_info (id, name) values ({}, 'xxxxx');".format(player_id)
     cursor.execute(add_player_info_sql)
     return
 
@@ -91,7 +113,7 @@ def add_room(record):
     # 向房号池中添加新的房间号
     # record为房号上传代码，str类型
     # 标准格式如：12345,23456,34567,45678
-    conn = MySQLdb.connect("localhost", "root", "", "csdw", charset="utf8")
+    conn = MySQLdb.connect("localhost", "root", "", "csdw_2021", charset="utf8")
     cursor = conn.cursor()
     try:
         # 读取标准格式数据代码，解码为具体数据
@@ -108,7 +130,7 @@ def add_room(record):
             if result is not None:
                 duplicate.append(room_id)
                 continue
-            sql_add_room_id = "insert into room_list (room_id) values ('{}')".format(room_id)
+            sql_add_room_id = "insert into room_list (room_id) values ('{}');".format(room_id)
             cursor.execute(sql_add_room_id)
         conn.commit()
     except:
@@ -121,7 +143,7 @@ def add_room(record):
 
 def get_room_id():
     # 获取一个房号，并从房号池中移除
-    conn = MySQLdb.connect("localhost", "root", "", "csdw", charset="utf8")
+    conn = MySQLdb.connect("localhost", "root", "", "csdw_2021", charset="utf8")
     cursor = conn.cursor()
     room_list_empty = False
     room_list_in_cd = False
@@ -130,13 +152,18 @@ def get_room_id():
         # 先判断是否已经过了5分钟冷却时间
         sql_check_time_his = "select time_his from time_his;"
         cursor.execute(sql_check_time_his)
-        time_his = cursor.fetchone()[0]
+        time_his = cursor.fetchone()
+        if time_his is None:
+            time_his = 0
+            sql_add_time_his = "insert into time_his values (0);"
+            cursor.execute(sql_add_time_his)
+        else:
+            time_his = time_his[0]
         # 如果不到5分钟，不取房号，反馈剩余冷却时间
         if time.time() - time_his < 300:
             room_list_in_cd = True
             cd_time_left = int(300 + time_his - time.time())
             raise Exception
-        
         # 查看池里是否还有剩余房号
         sql_get_remaining_room_id_count = "select count(id) from room_list;"
         cursor.execute(sql_get_remaining_room_id_count)
@@ -145,26 +172,21 @@ def get_room_id():
             print("no room id left")
             room_list_empty = True
             raise Exception
-
         # 获取第一个房号
         sql_get_room_id = "select room_id from room_list where id = 1;"
         cursor.execute(sql_get_room_id)
         room_id = cursor.fetchone()[0]
-
         # 删掉被获取了的房号
         sql_remove_room_id = "delete from room_list where id = 1;"
         cursor.execute(sql_remove_room_id)
-        
         # 重新生成主键
         sql_remove_primary_key = "alter table room_list drop id;"
         cursor.execute(sql_remove_primary_key)
         sql_create_primary_key = "alter table room_list add id int not null primary key auto_increment first;"
         cursor.execute(sql_create_primary_key)
-        
-        # 到了5分钟，取完房号后，更新取房号历史时间点
+        # 取完房号后，更新取房号历史时间点
         sql_update_time_his = "update time_his set time_his = {};".format(time.time())
         cursor.execute(sql_update_time_his)
-        
         conn.commit()
     except:
         conn.rollback()
@@ -183,7 +205,7 @@ def write_record(record):
     # record为对局数据上传代码，str类型
     # 标准格式如：20201111;919989,-38,4,5,3,1,1;704692,48,7,6,2,1,1;741920,-24,7,5,2,1,1;724364,14,4,6,7,1,1;704692;724364
     
-    conn = MySQLdb.connect("localhost", "root", "", "csdw", charset="utf8")
+    conn = MySQLdb.connect("localhost", "root", "", "csdw_2021", charset="utf8")
     cursor = conn.cursor()
     
     try:
@@ -243,7 +265,9 @@ def write_record(record):
 
         big_winner = int(data[5])
         big_boomer = int(data[6])
-
+        
+        '''
+        # 不再使用player_gamedetail
         # 大赢家
         if big_winner == player1_id:
             player1_big_winner = 1
@@ -279,7 +303,25 @@ def write_record(record):
             player4_big_boomer = 1
         else:
             player4_big_boomer = 0
+        '''
         print("read data success")
+        
+        # 将record写入game_his
+        # 完成
+        sql_game_his_check_duplicate = "select * from game_his where record = '{}';".format(record)
+        cursor.execute(sql_game_his_check_duplicate)
+        check_duplicate = cursor.fetchone()
+        if check_duplicate:
+            print("Duplicate record error")
+            raise Exception("Duplicate game_his record")
+        
+        sql_write_game_his = "insert into game_his (record) values ('{}');".format(record)
+        cursor.execute(sql_write_game_his)
+        print("write game_his success")
+        # 完成写入game_his，开始更新积分
+        
+        '''
+        # 2021.2.25 - 更新表结构，用game_his代替player_gamedetail
         # 将数据写入player_gamedetail库
         # 完成
         sql1_write = "insert into player_gamedetail values ({}, {}, {}, {}, {}, {}, {}, {}, {}, {})" \
@@ -323,7 +365,7 @@ def write_record(record):
             .format(player4_id, game_time, player4_score,
                     player4_hu, player4_zhuang, player4_pao, player4_bao, player4_lou,
                     player4_big_winner, player4_big_boomer)
-
+        
         cursor.execute(sql1_check_duplicate)
         result1 = cursor.fetchone()
         cursor.execute(sql2_check_duplicate)
@@ -347,7 +389,8 @@ def write_record(record):
         cursor.execute(sql4_write)
         print("write player_gamedetail success")
         # 完成写入player_gamedetail表，开始更新player_info表
-
+        '''
+        
         # 更新积分
         # 完成
         sql1_score = "update player_info set score = score + {} where id = {};".format(player1_score, player1_id)

@@ -5,6 +5,7 @@ import reply
 import receive
 import web
 import database
+# import database_new
 import time
 
 
@@ -67,8 +68,7 @@ class Handle(object):
                         content = database.query_info(recMsg.Content).encode("UTF-8")
 
                     elif recMsg.Content == "房号":
-                        # get_room_id_his_time = database.
-                            content = database.get_room_id()
+                        content = database.get_room_id()
 
                     # ####### 上传类
                     # 上传对局信息，写入数据
