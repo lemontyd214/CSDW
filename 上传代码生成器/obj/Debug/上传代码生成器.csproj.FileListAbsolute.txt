@@ -17,3 +17,4 @@ E:\CSDW\CSDW\上传代码生成器\obj\Debug\上传代码生成器.csproj.Genera
 E:\CSDW\CSDW\上传代码生成器\obj\Debug\上传代码生成器.csproj.CoreCompileInputs.cache
 E:\CSDW\CSDW\上传代码生成器\obj\Debug\上传代码生成器.exe
 E:\CSDW\CSDW\上传代码生成器\obj\Debug\上传代码生成器.pdb
+E:\CSDW\CSDW\上传代码生成器\obj\Debug\上传代码生成器.csprojAssemblyReference.cache

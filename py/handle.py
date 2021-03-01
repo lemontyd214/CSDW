@@ -75,6 +75,10 @@ class Handle(object):
                     elif recMsg.Content.startswith("upload-"):
                         content = database.write_record(recMsg.Content[7:])
 
+                    # 删除一条对局信息，更新player_info
+                    elif recMsg.Content.startswith("remove-"):
+                        content = database.remove_record(recMsg.Content[7:])
+
                     # 上传新房号，写入房号池
                     elif recMsg.Content.startswith("room-"):
                         content = database.add_room(recMsg.Content[5:])

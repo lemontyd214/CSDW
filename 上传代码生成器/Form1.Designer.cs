@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.player1_hu = new System.Windows.Forms.TextBox();
             this.player1_zhuang = new System.Windows.Forms.TextBox();
             this.player1_pao = new System.Windows.Forms.TextBox();
@@ -783,99 +784,100 @@
             // 
             // player1_id
             // 
+            this.player1_id.Cursor = System.Windows.Forms.Cursors.Default;
             this.player1_id.Font = new System.Drawing.Font("微软雅黑", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.player1_id.FormattingEnabled = true;
             this.player1_id.Items.AddRange(new object[] {
-            "寒哥",
-            "帅神",
-            "池哥",
-            "培根",
+            "XDS",
             "皮哥",
+            "池哥",
             "刀哥",
-            "刚子",
-            "能哥",
-            "孙哥",
-            "石阳",
             "TLS",
             "硕颀",
-            "XDS"});
+            "森哥",
+            "能哥",
+            "培根",
+            "寒哥",
+            "刚子",
+            "石阳",
+            "孙哥",
+            "帅神"});
             this.player1_id.Location = new System.Drawing.Point(131, 66);
             this.player1_id.Name = "player1_id";
             this.player1_id.Size = new System.Drawing.Size(100, 27);
             this.player1_id.TabIndex = 0;
-            this.player1_id.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // player2_id
             // 
             this.player2_id.Font = new System.Drawing.Font("微软雅黑", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.player2_id.FormattingEnabled = true;
             this.player2_id.Items.AddRange(new object[] {
-            "寒哥",
-            "帅神",
-            "池哥",
-            "培根",
+            "XDS",
             "皮哥",
+            "池哥",
             "刀哥",
-            "刚子",
-            "能哥",
-            "孙哥",
-            "石阳",
             "TLS",
             "硕颀",
-            "XDS"});
+            "森哥",
+            "能哥",
+            "培根",
+            "寒哥",
+            "刚子",
+            "石阳",
+            "孙哥",
+            "帅神"});
             this.player2_id.Location = new System.Drawing.Point(339, 66);
             this.player2_id.Name = "player2_id";
             this.player2_id.Size = new System.Drawing.Size(100, 27);
             this.player2_id.TabIndex = 9;
-            this.player2_id.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // player3_id
             // 
             this.player3_id.Font = new System.Drawing.Font("微软雅黑", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.player3_id.FormattingEnabled = true;
             this.player3_id.Items.AddRange(new object[] {
-            "寒哥",
-            "帅神",
-            "池哥",
-            "培根",
+            "XDS",
             "皮哥",
+            "池哥",
             "刀哥",
-            "刚子",
-            "能哥",
-            "孙哥",
-            "石阳",
             "TLS",
             "硕颀",
-            "XDS"});
+            "森哥",
+            "能哥",
+            "培根",
+            "寒哥",
+            "刚子",
+            "石阳",
+            "孙哥",
+            "帅神"});
             this.player3_id.Location = new System.Drawing.Point(548, 66);
             this.player3_id.Name = "player3_id";
             this.player3_id.Size = new System.Drawing.Size(100, 27);
             this.player3_id.TabIndex = 18;
-            this.player3_id.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // player4_id
             // 
             this.player4_id.Font = new System.Drawing.Font("微软雅黑", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.player4_id.FormattingEnabled = true;
             this.player4_id.Items.AddRange(new object[] {
-            "寒哥",
-            "帅神",
-            "池哥",
-            "培根",
+            "XDS",
             "皮哥",
+            "池哥",
             "刀哥",
-            "刚子",
-            "能哥",
-            "孙哥",
-            "石阳",
             "TLS",
             "硕颀",
-            "XDS"});
+            "森哥",
+            "能哥",
+            "培根",
+            "寒哥",
+            "刚子",
+            "石阳",
+            "孙哥",
+            "帅神"});
             this.player4_id.Location = new System.Drawing.Point(754, 66);
             this.player4_id.Name = "player4_id";
             this.player4_id.Size = new System.Drawing.Size(100, 27);
             this.player4_id.TabIndex = 27;
-            this.player4_id.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // Form1
             // 
@@ -954,6 +956,7 @@
             this.Controls.Add(this.player2_score);
             this.Controls.Add(this.player1_score);
             this.Controls.Add(this.player1_hu);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "CSDW - 对局上传代码生成器V1.0";
             this.Load += new System.EventHandler(this.Form1_Load);

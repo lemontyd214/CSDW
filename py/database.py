@@ -4,7 +4,7 @@
 import MySQLdb
 import time
 
-
+# 获取玩家总积分情况
 def query_info(query_id):
     # 获取玩家总积分情况
     # 从player_info中读score
@@ -68,6 +68,7 @@ def query_info(query_id):
     return query_result
 
 
+# 检查是否为新玩家，TRUE为新玩家，FALSE为老玩家
 def check_new_player(player_id, cursor):
     # 检查是否为新玩家，TRUE为新玩家，FALSE为老玩家
     # 若是新玩家在数据库中写一条空白新数据
@@ -80,6 +81,7 @@ def check_new_player(player_id, cursor):
     return True
 
 
+# 若为新玩家，在数据库中添加一条数据
 def add_player(player_id, cursor):
     # 若为新玩家，在数据库中添加一条数据
     # player_name添加随机名字，带后续修改；player_info添加默认空白数据
@@ -109,6 +111,7 @@ def add_player(player_id, cursor):
     return
 
 
+# 向房号池中添加新的房间号
 def add_room(record):
     # 向房号池中添加新的房间号
     # record为房号上传代码，str类型
@@ -141,6 +144,7 @@ def add_room(record):
     return "添加房号成功{}个；重复{}个".format(len(data) - len(duplicate), len(duplicate))
 
 
+# 获取一个房号，并从房号池中移除
 def get_room_id():
     # 获取一个房号，并从房号池中移除
     conn = MySQLdb.connect("localhost", "root", "", "csdw_2021", charset="utf8")
@@ -200,6 +204,7 @@ def get_room_id():
     return "取号成功：{}\n剩余房号：{}个".format(room_id, remaining_room_id_count[0] - 1)
 
 
+# 根据上传对局代码写数据库
 def write_record(record):
     # 根据上传对局代码写数据库
     # record为对局数据上传代码，str类型
@@ -1056,6 +1061,20 @@ def write_record(record):
     cursor.close()
     conn.close()
     return "写入数据成功"
+
+
+# 删除一条对局记录，并更新player_info
+def remove_record(record):
+    conn = MySQLdb.connect("localhost", "root", "", "csdw_2021", charset="utf8")
+    cursor = conn.cursor()
+    try:
+        pass
+    except:
+        conn.rollback()
+        return "删除一条对局记录失败"
+    cursor.close()
+    conn.close()
+    return "删除一条对局记录成功"
 
 
 if __name__ == "__main__":
