@@ -276,6 +276,11 @@ namespace 上传代码生成器
                 MessageBox.Show("日期为空，请检查！");
                 return;
             }
+            // 检查日期长度是否合法
+            if (date.Text.Length != 8)
+            {
+                MessageBox.Show("日期长度错误，请检查！");
+            }
             // 检查积分和是否为0
             if (int.Parse(player1_score.Text) + int.Parse(player2_score.Text) + int.Parse(player3_score.Text) + int.Parse(player4_score.Text) != 0)
             {
@@ -298,22 +303,33 @@ namespace 上传代码生成器
             name_dict.Add("硕颀", "908340");
             name_dict.Add("XDS", "919989");
 
+            string big_winner = "";
+            string big_boomer = "";
+
+            if (player1_big_winner.Checked) big_winner = name_dict[player1_id.SelectedItem.ToString()];
+            else if (player2_big_winner.Checked) big_winner = name_dict[player2_id.SelectedItem.ToString()];
+            else if (player3_big_winner.Checked) big_winner = name_dict[player3_id.SelectedItem.ToString()];
+            else if (player4_big_winner.Checked) big_winner = name_dict[player4_id.SelectedItem.ToString()];
+
+            if (player1_big_boomer.Checked) big_boomer = name_dict[player1_id.SelectedItem.ToString()];
+            else if (player2_big_boomer.Checked) big_boomer = name_dict[player2_id.SelectedItem.ToString()];
+            else if (player3_big_boomer.Checked) big_boomer = name_dict[player3_id.SelectedItem.ToString()];
+            else if (player4_big_boomer.Checked) big_boomer = name_dict[player4_id.SelectedItem.ToString()];
+
             string result = "upload-" + date.Text + ";" +
                 name_dict[player1_id.SelectedItem.ToString()] + "," + player1_score.Text + "," +
-                player1_hu.Text + "," + player1_zhuang.Text + "," + player1_pao.Text + "," + player1_bao.Text + "," + player1_lou.Text + "," +
-                (player1_big_winner.Checked ? "1" : "0") + "," + (player1_big_boomer.Checked ? "1" : "0") + ";" +
+                player1_hu.Text + "," + player1_zhuang.Text + "," + player1_pao.Text + "," + player1_bao.Text + "," + player1_lou.Text + ";" +
 
                 name_dict[player2_id.SelectedItem.ToString()] + "," + player2_score.Text + "," +
-                player2_hu.Text + "," + player2_zhuang.Text + "," + player2_pao.Text + "," + player2_bao.Text + "," + player2_lou.Text + "," +
-                (player2_big_winner.Checked ? "1" : "0") + "," + (player2_big_boomer.Checked ? "1" : "0") + ";" +
+                player2_hu.Text + "," + player2_zhuang.Text + "," + player2_pao.Text + "," + player2_bao.Text + "," + player2_lou.Text + ";" +
 
                 name_dict[player3_id.SelectedItem.ToString()] + "," + player3_score.Text + "," +
-                player3_hu.Text + "," + player3_zhuang.Text + "," + player3_pao.Text + "," + player3_bao.Text + "," + player3_lou.Text + "," +
-                (player3_big_winner.Checked ? "1" : "0") + "," + (player3_big_boomer.Checked ? "1" : "0") + ";" +
+                player3_hu.Text + "," + player3_zhuang.Text + "," + player3_pao.Text + "," + player3_bao.Text + "," + player3_lou.Text + ";" +
 
                 name_dict[player4_id.SelectedItem.ToString()] + "," + player4_score.Text + "," +
-                player4_hu.Text + "," + player4_zhuang.Text + "," + player4_pao.Text + "," + player4_bao.Text + "," + player4_lou.Text + "," +
-                (player4_big_winner.Checked ? "1" : "0") + "," + (player4_big_boomer.Checked ? "1" : "0");
+                player4_hu.Text + "," + player4_zhuang.Text + "," + player4_pao.Text + "," + player4_bao.Text + "," + player4_lou.Text + ";" +
+                
+                big_winner + ";" + big_boomer;
 
             upload_code.Text = result;
             MessageBox.Show("代码生成成功！");
