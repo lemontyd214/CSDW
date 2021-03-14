@@ -1093,9 +1093,11 @@ def query_game_his(date):
             return "暂无对局信息"
         for row in results:
             record = row[1]
-            print(record)
             if record.startswith(date):
+                print("对的 " + record)
                 query_result = query_result + record + "\n"
+                print("当前结果 " + query_result)
+
     except:
         print("查询对局历史失败")
         return "查询对局历史失败"
