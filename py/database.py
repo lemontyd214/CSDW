@@ -1084,26 +1084,26 @@ def query_game_his(date):
     conn = MySQLdb.connect("localhost", "root", "", "csdw_2021", charset="utf8")
     cursor = conn.cursor()
     query_result = ""
+    if len(str(date)) != 8:
+        return "查询日期格式错误"
     try:
         sql = "select * from game_his;"
         cursor.execute(sql)
         results = cursor.fetchall()
-        print(results)
         if results is ():
             return "暂无对局信息"
         for row in results:
             record = str(row[1])
-            print("record", record)
-            print("date", date)
-            print(record.startswith(str(date)))
             if record.startswith(str(date)):
-                query_result = query_result + record + "\n"
+                query_result = query_result + record + "\n" + "\n"
                 print(query_result)
     except:
         print("查询对局历史失败")
         return "查询对局历史失败"
     cursor.close()
     conn.close()
+    if query_result == "":
+        return "查询结果为空"
     return query_result
 
 
