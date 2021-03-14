@@ -1088,10 +1088,12 @@ def query_game_his(date):
         sql = "select * from game_his;"
         cursor.execute(sql)
         results = cursor.fetchall()
+        print(results)
         if results is ():
             return "暂无对局信息"
         for row in results:
             record = row[0]
+            print(record)
             if record.startswith(date):
                 query_result = query_result + record + "\n"
     except:
