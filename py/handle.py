@@ -73,7 +73,7 @@ class Handle(object):
                         content = admin_reply
 
                     # 查询积分
-                    if recMsg.Content in query_list:
+                    elif recMsg.Content in query_list:
                         content = database.query_info(recMsg.Content).encode("UTF-8")
 
                     # 获取房号
