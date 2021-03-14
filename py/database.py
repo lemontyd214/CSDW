@@ -1097,7 +1097,8 @@ def query_game_his(date):
             record = str(row[1])
             print(type(record))
             print(record)
-            if record.startswith(date):
+            print("date type", type(date))
+            if record.startswith(str(date)):
                 query_result = query_result + record + "\n"
     except:
         print("查询对局历史失败")
