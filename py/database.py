@@ -1092,7 +1092,7 @@ def query_game_his(date):
         if results is ():
             return "暂无对局信息"
         for row in results:
-            record = row[0]
+            record = row[1]
             print(record)
             if record.startswith(date):
                 query_result = query_result + record + "\n"
