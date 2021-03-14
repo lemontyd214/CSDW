@@ -54,10 +54,10 @@ class Handle(object):
                          "回复【房号】获取房间号(随用随取，不要乱试)\n\n" \
                          "更多功能开发中，敬请期待！"
             admin_reply = "<管理员功能列表>\n\n" \
-                          "upload-    上传对局信息\n" \
-                          "his-       查询对局历史\n" \
-                          "remove-    删除某条对局历史\n" \
-                          "room-      上传房号"
+                          "upload-\t上传对局信息\n" \
+                          "his-\t查询对局历史\n" \
+                          "remove-\t删除某条对局历史\n" \
+                          "room-\t上传房号"
             if isinstance(recMsg, receive.Msg):
                 toUser = recMsg.FromUserName
                 fromUser = recMsg.ToUserName
