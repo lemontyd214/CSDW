@@ -67,8 +67,13 @@ class Handle(object):
                     if recMsg.Content in query_list:
                         content = database.query_info(recMsg.Content).encode("UTF-8")
 
+                    # 获取房号
                     elif recMsg.Content == "房号":
                         content = database.get_room_id()
+
+                    # 查询对局历史
+                    elif recMsg.Content.startswith("his-"):
+                        content = database.query_game_his(recMsg.Content[4:])
 
                     # ####### 上传类
                     # 上传对局信息，写入数据

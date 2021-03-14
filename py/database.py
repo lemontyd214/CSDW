@@ -1064,6 +1064,7 @@ def write_record(record):
 
 
 # 删除一条对局记录，并更新player_info
+# 未完成
 def remove_record(record):
     conn = MySQLdb.connect("localhost", "root", "", "csdw_2021", charset="utf8")
     cursor = conn.cursor()
@@ -1075,6 +1076,30 @@ def remove_record(record):
     cursor.close()
     conn.close()
     return "删除一条对局记录成功"
+
+
+# 查询game_his记录，查询方式待定
+# 未完成
+def query_game_his(date):
+    conn = MySQLdb.connect("localhost", "root", "", "csdw_2021", charset="utf8")
+    cursor = conn.cursor()
+    query_result = ""
+    try:
+        sql = "select * from game_his;"
+        cursor.execute(sql)
+        results = cursor.fetchall()
+        if results is ():
+            return "暂无对局信息"
+        for row in results:
+            record = row[0]
+            if record.startswith(date):
+                query_result = query_result + record + "\n"
+    except:
+        print("查询对局历史失败")
+        return "查询对局历史失败"
+    cursor.close()
+    conn.close()
+    return query_result
 
 
 if __name__ == "__main__":
